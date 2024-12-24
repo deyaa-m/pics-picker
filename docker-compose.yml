@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: outputs/
+        target: /app/outputs
+        bind:
+          create_host_path: true
+      - type: bind
+        source: input_files/
+        target: /app/input_files
+        bind:
+          create_host_path: true
+    environment:
+      - inputs_dir=input_files/
+      - outputs_dir=outputs/
+    # working_dir: /app
+    command: ["python", "code.py"]
