@@ -47,25 +47,35 @@ for file in os.listdir(input_dir):
             htmldata = getdata(product_url)  
             soup = BeautifulSoup(htmldata, 'html.parser') 
             images = soup.find_all('img') 
-        
-            for item in images: 
+            jpgs_count = []
+            for item in images:
                 image = item['src']
-                # try:
                 if ".jpg" in image:
-                    location = "images/" + image.split("/")[-1]
-                    img_data = requests.get(image).content
-                    with open(location, 'wb') as handler:
-                        handler.write(img_data)
-                    print(location)
-                    # Insert an image.
-                    worksheet.write(j, column, str(product_serial.value), cell_format)
-                    worksheet.write(j, column+1, str(product_name.value), cell_format)
-                    worksheet.set_column(column+2, 60)
-                    worksheet.set_row(j, 120)
-                    worksheet.insert_image(j, column+2, location, {"x_scale": 0.25, "y_scale": 0.25})
-                    worksheet.write(j, column+3, str(image), cell_format)
-                    worksheet.autofit()
-            
+                    jpgs_count.append(image)
+                
+            if len(jpgs_count) != 1 :
+                worksheet.write(j, column, str(product_serial.value), cell_format)
+                worksheet.write(j, column+1, str(product_name.value), cell_format)
+                worksheet.write(j, column+2, "Product/Image Not Found")
+            else:
+                for item in images: 
+                    image = item['src']
+                    # try:
+                    if ".jpg" in image:
+                        location = "images/" + image.split("/")[-1]
+                        img_data = requests.get(image).content
+                        with open(location, 'wb') as handler:
+                            handler.write(img_data)
+                        print(location)
+                        # Insert an image.
+                        worksheet.write(j, column, str(product_serial.value), cell_format)
+                        worksheet.write(j, column+1, str(product_name.value), cell_format)
+                        worksheet.set_column(column+2, 60)
+                        worksheet.set_row(j, 120)
+                        worksheet.insert_image(j, column+2, location, {"x_scale": 0.25, "y_scale": 0.25})
+                        worksheet.write(j, column+3, str(image), cell_format)
+                        worksheet.autofit()
+                
         workbook.close()
         # except:
             # pass
